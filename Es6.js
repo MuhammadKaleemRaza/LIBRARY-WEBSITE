@@ -1,4 +1,5 @@
 let $libraryform = document.getElementById('libraryForm');
+localStorage.clear()
 
 class Book {
     constructor($bookName, $author, $genre) {
@@ -7,28 +8,48 @@ class Book {
         this.$genre = $genre
     }
 }
+
 class Display {
+    
     add(bookObj) {
-        console.log('i am the kaleem raza');
+
+        let booksArr = []
+
+        let booksFromLocalStorage = localStorage.getItem('books')
+
+        if (booksFromLocalStorage === null) {
+            booksArr = []
+        } else {
+            booksArr = JSON.parse(booksFromLocalStorage)
+        }
+
         let $tableBody = document.getElementById('tablebody');
-        let uiString = ` <tr>
-                            <td>${bookObj.$bookName}</td>
-                            <td>${bookObj.$author}</td>
-                            <td>${bookObj.$genre}</td>
-                        </tr> `
-        $tableBody.innerHTML += uiString;
+
+        booksArr.forEach(function (bookObj) {
+            let uiString = ` <tr>
+                                <td>${bookObj.$bookName}</td>
+                                <td>${bookObj.$author}</td>
+                                <td>${bookObj.$genre}</td>
+                            </tr> `
+            $tableBody.innerHTML += uiString;
+
+        })
+
     }
+
     clear() {
         $libraryform.reset();
     }
+
     validate(bookObj) {
-        if  (bookObj.$bookName.length > 3 || bookObj.$author.length > 3) {
+        if (bookObj.$bookName.length > 3 || bookObj.$author.length > 3) {
             return true
         }
         else {
             return false
         }
-    } 
+    }
+
     show(type, displayMessage) {
         let $message = document.getElementById('message');
         $message.innerHTML = `
@@ -39,54 +60,66 @@ class Display {
         `
         setTimeout(() => {
             $message.innerHTML = ""
-        }, 2000);
+        }, 5000);
     }
 }
 
 $libraryform.addEventListener('submit', function libraryFormSubmit(e) {
 
-        e.preventDefault();
+    e.preventDefault();
 
-        let $author = document.getElementById('author').value;
+    let $author = document.getElementById('author').value;
 
-        let $bookName = document.getElementById('bookName').value;
+    let $bookName = document.getElementById('bookName').value;
 
-        let $fiction = document.getElementById('fiction');
+    let $fiction = document.getElementById('fiction');
 
-        let $programming = document.getElementById('programming');
+    let $programming = document.getElementById('programming');
 
-        let $physcological = document.getElementById('physcological');
+    let $physcological = document.getElementById('physcological');
 
-        let $genre;
+    let $genre;
 
-        if ($fiction.checked) {
-            $genre = $fiction.value;
-        }
+    let booksArr = []
 
-        else if ($programming.checked) {
-            $genre = $programming.value;
-        }
+        // let booksFromLocalStorage = localStorage.getItem('books')
 
-        else if ($physcological.checked) {
-            $genre = $physcological.value;
-        }
+        // if (booksFromLocalStorage === null) {
+        //     booksArr = []
+        // } else {
+        //     booksArr = JSON.parse(booksFromLocalStorage)
+        // }
 
-        let bookObj = new Book($bookName, $author, $genre); //made the book object
+    if ($fiction.checked) {
+        $genre = $fiction.value;
+    }
 
-        let displayObj = new Display(); // made the display obj
+    else if ($programming.checked) {
+        $genre = $programming.value;
+    }
 
-        if (displayObj.validate(bookObj)) {
-            displayObj.add(bookObj);
-            displayObj.clear();
-            displayObj.show('success', 'your book has been added!');
+    else if ($physcological.checked) {
+        $genre = $physcological.value;
+    }
 
-        }
+    let bookObj = new Book($bookName, $author, $genre); //made the book object
 
-        else {
-            //if form is not validate show error
-            displayObj.show('danger', "sorry you cannot add this book");
-        }
+    booksArr.push(bookObj)
 
-        console.log(bookObj);
-    })
+    localStorage.setItem('books', JSON.stringify(booksArr))
 
+    let displayObj = new Display(); // made the display obj
+
+    if (displayObj.validate(bookObj)) {
+        displayObj.add(bookObj);
+        displayObj.clear();
+        displayObj.show('success', 'your book has been added!');
+
+    }
+
+    else {
+        //if form is not validate show error
+        displayObj.show('danger', "sorry you cannot add this book");
+    }
+
+})
