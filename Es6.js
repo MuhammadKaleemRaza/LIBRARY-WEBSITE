@@ -1,5 +1,4 @@
 let $libraryform = document.getElementById('libraryForm');
-localStorage.clear()
 
 class Book {
     constructor($bookName, $author, $genre) {
@@ -18,22 +17,23 @@ class Display {
         let booksFromLocalStorage = localStorage.getItem('books')
 
         if (booksFromLocalStorage === null) {
-            booksArr = []
+                booksArr = []
         } else {
-            booksArr = JSON.parse(booksFromLocalStorage)
+                booksArr = JSON.parse(booksFromLocalStorage)
         }
 
         let $tableBody = document.getElementById('tablebody');
 
-        booksArr.forEach(function (bookObj) {
-            let uiString = ` <tr>
-                                <td>${bookObj.$bookName}</td>
-                                <td>${bookObj.$author}</td>
-                                <td>${bookObj.$genre}</td>
-                            </tr> `
-            $tableBody.innerHTML += uiString;
+        let uiString = ` <tr>   
+                            <td>${bookObj.$bookName}</td>
+                            <td>${bookObj.$author}</td>
+                            <td>${bookObj.$genre}</td>
+                        </tr> `
+        $tableBody.innerHTML += uiString;
 
-        })
+        booksArr.push(uiString)
+
+        localStorage.setItem('books', JSON.stringify(booksArr))
 
     }
 
@@ -64,6 +64,8 @@ class Display {
     }
 }
 
+
+
 $libraryform.addEventListener('submit', function libraryFormSubmit(e) {
 
     e.preventDefault();
@@ -82,13 +84,13 @@ $libraryform.addEventListener('submit', function libraryFormSubmit(e) {
 
     let booksArr = []
 
-        // let booksFromLocalStorage = localStorage.getItem('books')
+    let booksFromLocalStorage = localStorage.getItem('books')        
 
-        // if (booksFromLocalStorage === null) {
-        //     booksArr = []
-        // } else {
-        //     booksArr = JSON.parse(booksFromLocalStorage)
-        // }
+    if (booksFromLocalStorage === null) {
+            booksArr = []
+    } else {
+            booksArr = JSON.parse(booksFromLocalStorage)
+    }
 
     if ($fiction.checked) {
         $genre = $fiction.value;
@@ -123,3 +125,4 @@ $libraryform.addEventListener('submit', function libraryFormSubmit(e) {
     }
 
 })
+
